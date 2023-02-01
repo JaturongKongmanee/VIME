@@ -1,0 +1,2 @@
+[] Visualize learned representation using t-SNE and PCA
+[] Add more data loader for other tabular data

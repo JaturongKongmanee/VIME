@@ -27,7 +27,7 @@ from data_loader import load_mnist_data
 from supervised_models import logit, xgb_model, mlp
 
 from vime_self import vime_self
-from vime_semi import vime_semi
+# from vime_semi import vime_semi
 from vime_utils import perf_metric
 
 #%%
@@ -104,15 +104,15 @@ def vime_main (label_data_rate, model_sets, label_no, p_m, alpha, K, beta):
   
   # Train VIME-Self
   vime_self_parameters = dict()
-  vime_self_parameters['batch_size'] = 128
-  vime_self_parameters['epochs'] = 10
+  vime_self_parameters['batch_size'] = 32
+  vime_self_parameters['epochs'] = 3
   vime_self_encoder = vime_self(x_unlab, p_m, alpha, vime_self_parameters)
     
   # Save encoder
   if not os.path.exists('save_model'):
     os.makedirs('save_model')
   
-  file_name = './save_model/encoder_model.h5'
+  file_name = './save_model/encoder_model_1.h5'
   vime_self_encoder.save(file_name)  
   
   # Test VIME-Self
@@ -126,15 +126,14 @@ def vime_main (label_data_rate, model_sets, label_no, p_m, alpha, K, beta):
                                                         metric)
   
   # Train VIME-Semi
-  vime_semi_parameters = dict()
-  vime_semi_parameters['hidden_dim'] = 100
-  vime_semi_parameters['batch_size'] = 128
-  vime_semi_parameters['iterations'] = 1000
-  y_test_hat = vime_semi(x_train, y_train, x_unlab, x_test, 
-                         vime_semi_parameters, p_m, K, beta, file_name)
+  # vime_semi_parameters = dict()
+  # vime_semi_parameters['hidden_dim'] = 100
+  # vime_semi_parameters['batch_size'] = 128
+  # vime_semi_parameters['iterations'] = 1000
+  # y_test_hat = vime_semi(x_train, y_train, x_unlab, x_test, vime_semi_parameters, p_m, K, beta, file_name)
   
   # Test VIME-Semi
-  results[len(model_sets)+1] = perf_metric(metric, y_test, y_test_hat)
+  # results[len(model_sets)+1] = perf_metric(metric, y_test, y_test_hat)
 
   # Print the results for each iteration
   print(np.round(results, 4))
@@ -194,7 +193,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--iterations',
       help='number of experiments iterations',
-      default=10,
+      default=5,
       type=int)
   parser.add_argument(
       '--model_name',
@@ -204,7 +203,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--label_no',
       help='number of labeled data to be used',
-      default=1000,
+      default=500,
       type=int)
   parser.add_argument(
       '--p_m',
@@ -236,3 +235,8 @@ if __name__ == '__main__':
   
   # Calls main function  
   results = exp_main(args)
+
+
+# Supervised Performance, Model Name: xgboost, Avg Perf: 0.8282, Std Perf: 0.0095
+# VIME-Self Performance, Avg Perf: 0.8764, Std Perf: 0.0059
+# VIME Performance, Avg Perf: 0.0, Std Perf: 0.0
